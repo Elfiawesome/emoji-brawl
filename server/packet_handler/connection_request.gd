@@ -2,7 +2,9 @@ extends PacketHandlerServer
 ## IMPORTANT BECAUSE WE DO THE INITIALIZING AND HANDSHAKE HERE!
 
 func run(server: Server, client: Server.ClientBase, data: Array) -> void: 
-	if !validate_data(data): return
+	if !validate_data(data):
+		printerr("Invalid 'connection_request' packet received.")
+		return
 	
 	if client.state == client.State.PLAY:
 		# Meaning the client tried to do a connection request again for some reason
@@ -21,14 +23,14 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 	client.id = hash_id
 	client.state = client.State.PLAY
 	
+	# Create avatar for this player
 	var avatar_state := server.avatar_manager.create_avatar(client.id, username)
 	if not avatar_state:
 		client.force_disconnect("Failed to create avatar on server.")
 		return
-	
+	avatar_state.color = data[1]
+	# Set controller so when server receive from this client, we know which avatar it's talking about
 	client.controlled_avatar_id = avatar_state.avatar_id
-	
-	avatar_state.position = Vector2(randi_range(0,500), randi_range(0,500))
 	var serialized_avatar_state := avatar_state.serialize()
 	
 	var serialized_avatar_states := {}
@@ -39,9 +41,8 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 	
 	server.network_bus.send_data(client.id, "world_init", [avatar_state.avatar_id])
 
-
-
 func validate_data(data: Array) -> bool:
-	if data.size() != 1: return false
-	if !(data[0] is String): return false
+	if data.size() != 2: return false
+	if !(data[0] is String): return false # username
+	if !(data[1] is Color): return false # custom set color
 	return true

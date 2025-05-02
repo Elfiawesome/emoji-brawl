@@ -55,7 +55,7 @@ class NetworkConnectionIntegrated extends NetworkConnectionBase:
 		server.take_client_connection(client)
 		client.packet_sent.connect(_on_packet_received)
 		username = username_
-		client.packet_received.emit("connection_request", [username])
+		client.packet_received.emit("connection_request", [username, Color.WHITE])
 	
 	func send_data(type: String, data: Array = []) -> void:
 		client.packet_received.emit(type, data)

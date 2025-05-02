@@ -75,6 +75,7 @@ func send_state_updates() -> void:
 class AvatarServerState extends RefCounted:
 	var avatar_id: String
 	var position: Vector2
+	var color: Color = Color.WHITE
 	var username: String
 	var need_update_state: bool = true
 	
@@ -85,5 +86,6 @@ class AvatarServerState extends RefCounted:
 	func serialize() -> Dictionary:
 		return {
 			Avatar.KEYS.POSITION: position,
+			Avatar.KEYS.COLOR: color,
 			Avatar.KEYS.USERNAME: username
 		}

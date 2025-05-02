@@ -16,6 +16,7 @@ func set_is_local(local_status: bool) -> void: _is_local = local_status
 
 func deserialize(state_data: Dictionary) -> void:
 	$Label.text = state_data.get(KEYS.USERNAME, "Null")
+	$Label.modulate = state_data.get(KEYS.COLOR, Color.WHITE)
 	var server_pos: Vector2 = state_data.get(KEYS.POSITION, position)
 	if _is_local:
 		position = lerp(position, server_pos, RECONCILE_LERP_FACTOR)
@@ -24,5 +25,6 @@ func deserialize(state_data: Dictionary) -> void:
 
 const KEYS = {
 	USERNAME = "username",
+	COLOR = "color",
 	POSITION = "pos"
 }
