@@ -1,6 +1,5 @@
 class_name AvatarServerManager extends Node
 
-
 # Constants
 const DEFAULT_START_POS := Vector2(200, 200)
 const MOVEMENT_SPEED := 300.0 # Server should define speed
@@ -23,7 +22,7 @@ func create_avatar(client_id: String, username: String) -> AvatarServerState:
 	
 	var avatar_id := UUID.v4()
 	var start_pos := DEFAULT_START_POS
-	var new_avatar_state := AvatarServerState.new(avatar_id, client_id, start_pos)
+	var new_avatar_state := AvatarServerState.new(avatar_id, start_pos)
 	new_avatar_state.username = username
 	
 	avatars[avatar_id] = new_avatar_state
@@ -31,7 +30,7 @@ func create_avatar(client_id: String, username: String) -> AvatarServerState:
 	print("Avatar %s created for client %s" % [avatar_id, client_id])
 	
 	# Mark for initial broadcast
-	new_avatar_state.is_updated = true
+	new_avatar_state.need_update_state = true
 	
 	return new_avatar_state
 
@@ -56,7 +55,7 @@ func process_input(avatar_id: String, input_direction: Vector2, delta: float) ->
 		var state := avatars[avatar_id]
 		if input_direction != Vector2.ZERO:
 			state.position += input_direction.normalized() * MOVEMENT_SPEED * delta
-			state.is_updated = true
+			state.need_update_state = true
 	else:
 		push_warning("Received input for unknown avatar_id: %s" % avatar_id)
 
@@ -64,32 +63,27 @@ func send_state_updates() -> void:
 	var changed_states: Dictionary = {}
 	for avatar_id in avatars:
 		var state := avatars[avatar_id]
-		if state.is_updated:
-			changed_states[avatar_id] = { "pos": state.position, "username": state.username }
-			state.is_updated = false # Reset flag
+		if state.need_update_state:
+			changed_states[avatar_id] = state.serialize()
+			state.need_update_state = false # Reset flag
 	
 	if not changed_states.is_empty():
 		# Broadcast only the changed states to all clients
 		network_bus.broadcast_data("avatar_state_update", [changed_states])
 		# TODO: Send only relevant states based on proximity (Area of Interest)
 
-func get_full_state_for_others(exclude_avatar_id: String = "") -> Dictionary:
-	var full_state := {}
-	for avatar_id in avatars:
-		if avatar_id == exclude_avatar_id:
-			continue
-		var state := avatars[avatar_id]
-		full_state[avatar_id] = { "pos": state.position, "username": state.username }
-	return full_state
-
 class AvatarServerState extends RefCounted:
 	var avatar_id: String
-	var controlling_client_id: String
 	var position: Vector2
 	var username: String
-	var is_updated: bool = true
+	var need_update_state: bool = true
 	
-	func _init(avatar_id_: String, client_id_: String, start_pos_: Vector2 = Vector2.ZERO) -> void:
+	func _init(avatar_id_: String, start_pos_: Vector2 = Vector2.ZERO) -> void:
 		avatar_id = avatar_id_
-		controlling_client_id = client_id_
 		position = start_pos_
+	
+	func serialize() -> Dictionary:
+		return {
+			Avatar.KEYS.POSITION: position,
+			Avatar.KEYS.USERNAME: username
+		}

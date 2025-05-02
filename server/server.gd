@@ -57,7 +57,7 @@ class ClientBase extends Node:
 	signal packet_received(type: String, data: Array)
 	
 	var username: String
-	var controlled_avatar_id: String
+	var controlled_avatar_id: String # Used as reference to delete avatar when processing input
 	
 	var state: State = State.NONE
 	var id: String # Usually set during connection_request based on username/hash

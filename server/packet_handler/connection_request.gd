@@ -28,22 +28,18 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 	
 	client.controlled_avatar_id = avatar_state.avatar_id
 	
-	var initial_self_state := { "pos": avatar_state.position, "username": username }
-	var other_avatars_state := server.avatar_manager.get_full_state_for_others(avatar_state.avatar_id)
+	avatar_state.position = Vector2(randi_range(0,500), randi_range(0,500))
+	var serialized_avatar_state := avatar_state.serialize()
 	
-	# Tell connecting client the current game state
-	server.network_bus.send_data(client.id, "welcome", [
-		avatar_state.avatar_id,
-		initial_self_state,
-		other_avatars_state
-	])
+	var serialized_avatar_states := {}
+	for _avatar_id in server.avatar_manager.avatars:
+		var _avatar_state := server.avatar_manager.avatars[_avatar_id]
+		serialized_avatar_states[_avatar_id] = _avatar_state.serialize()
+	server.network_bus.broadcast_data("avatar_state_update", [serialized_avatar_states])
 	
-	var other_clients := server.clients.keys().duplicate()
-	other_clients.erase(client.id)
-	server.network_bus.broadcast_specific_data(other_clients, "avatar_spawned", [
-		avatar_state.avatar_id,
-		initial_self_state
-	])
+	server.network_bus.send_data(client.id, "world_init", [avatar_state.avatar_id])
+
+
 
 func validate_data(data: Array) -> bool:
 	if data.size() != 1: return false

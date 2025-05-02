@@ -5,10 +5,6 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 		push_warning("Client %s sent invalid avatar input data." % client.id)
 		return
 	
-	if client.state != Server.ClientBase.State.PLAY:
-		push_warning("Client %s sent input before PLAY state." % client.id)
-		return
-	
 	if not client.controlled_avatar_id:
 		push_warning("Client %s sent input but has no controlled avatar." % client.id)
 		return
@@ -21,7 +17,7 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 
 
 func validate_data(data: Array) -> bool:
-	if data.size() != 2: return false # Expecting [Vector2, float]
-	if not (data[0] is Vector2): return false
-	if not (data[1] is float): return false
+	if data.size() != 2: return false
+	if not (data[0] is Vector2): return false # movement direction
+	if not (data[1] is float): return false # client's delta
 	return true

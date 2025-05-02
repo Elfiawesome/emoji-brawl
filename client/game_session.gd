@@ -27,7 +27,9 @@ func initialize_managers() -> void:
 
 func _on_handle_data(type: String, data: Array) -> void:
 	var handler := PacketHandlerClient.get_handler(type)
-	if !handler: return
+	if !handler:
+		printerr("Client tried handling an invalid handler type '%s'" % type)
+		return
 	handler.run(self, data)
 
 class NetworkConnectionBase extends Node:

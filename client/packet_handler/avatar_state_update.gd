@@ -1,7 +1,7 @@
 extends PacketHandlerClient
 
 func run(game: GameSession, data: Array) -> void:
-	if not validate_data(data):
+	if !validate_data(data):
 		printerr("Invalid 'avatar_state_update' packet received.")
 		return
 	
@@ -9,9 +9,14 @@ func run(game: GameSession, data: Array) -> void:
 	
 	for avatar_id: String in states:
 		var state_data: Dictionary = states[avatar_id]
-		game.avatar_manager.update_avatar_state(avatar_id, state_data)
+		
+		if avatar_id in game.avatar_manager.avatars:
+			var avatar := game.avatar_manager.avatars[avatar_id]
+			avatar.deserialize(state_data)
+		else:
+			game.avatar_manager.spawn_avatar(avatar_id, state_data)
 
 func validate_data(data: Array) -> bool:
 	if data.size() != 1: return false
-	if not (data[0] is Dictionary): return false # states dictionary
+	if !(data[0] is Dictionary): return false # states dictionary
 	return true
