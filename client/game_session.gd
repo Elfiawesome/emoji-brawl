@@ -1,39 +1,31 @@
 class_name GameSession extends Node
 
 var network_connection: NetworkConnectionBase
-var avatars: Dictionary[String, Avatar] = {}
-var local_avatar_id: String
+var avatar_manager: AvatarClientManager
 
 @onready var disconnect_panel: Panel = $CanvasLayer/Panel
 @onready var disconnect_label: Label = $CanvasLayer/Panel/Label
 
 func _ready() -> void:
+	# Create relevant connection thingy
 	if Global.instance_num == 0:
 		var server := preload("res://server/server.tscn").instantiate()
 		add_child(server)
 		network_connection = NetworkConnectionIntegrated.new(server)
-		#network_connection = NetworkConnectionServer.new()
 	else:
 		network_connection = NetworkConnectionServer.new()
-	
+	# Initalize managers
+	initialize_managers()
+	# Connect to server
 	network_connection.packet_received.connect(_on_handle_data)
 	add_child(network_connection)
 	network_connection.connect_to_server("127.0.0.1", 3115, Global.username)
 
-func get_input() -> Vector2:
-	var speed := 300
-	var input_direction := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	return input_direction * speed
-
-func _process(delta: float) -> void:
-	if local_avatar_id in avatars:
-		var move := get_input()
-		if move != Vector2.ZERO:
-			avatars[local_avatar_id].position += (move * delta)
-			network_connection.send_data("update_avatar_position", [avatars[local_avatar_id].position])
+func initialize_managers() -> void:
+	avatar_manager = AvatarClientManager.new(self, network_connection)
+	add_child(avatar_manager)
 
 func _on_handle_data(type: String, data: Array) -> void:
-	#print("Client["+str(Global.instance_num)+"] packet: " + type + " -> " +str(data))
 	var handler := PacketHandlerClient.get_handler(type)
 	if !handler: return
 	handler.run(self, data)
@@ -101,7 +93,8 @@ class NetworkConnectionServer extends NetworkConnectionBase:
 	
 	func leave_server() -> void:
 		stream_peer.disconnect_from_host()
-		queue_free()
+		# We dont destroy just in case we are trying to send data when we already disconnected
+		# queue_free()
 	
 	func send_data(type: String, data: Array = []) -> void:
 		stream_peer.poll()

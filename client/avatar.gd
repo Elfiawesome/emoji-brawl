@@ -1,15 +1,25 @@
 class_name Avatar extends Node2D
 
 var target_position: Vector2
-var is_local: bool = true
+var _is_local: bool = false
 
-func _update_position(new_pos: Vector2) -> void:
+const RECONCILE_LERP_FACTOR = 0.2
+
+func _ready() -> void:
+	target_position = position
+
+func set_is_local(local_status: bool) -> void:
+	_is_local = local_status
+
+func set_target_position(new_pos: Vector2) -> void:
 	target_position = new_pos
-	#position = target_position
+
+func set_username_label(username: String) -> void:
+	$Label.text = username
+
+func reconcile_position(server_pos: Vector2) -> void:
+	position = lerp(position, server_pos, RECONCILE_LERP_FACTOR)
 
 func _process(delta: float) -> void:
-	if !is_local:
-		var tween := create_tween()
-		tween.tween_property(self, "position", target_position, delta*4).set_ease(Tween.EASE_OUT)
-		#position = lerp(position, target_position, 1-pow(0.5, delta*10))
-	
+	if !_is_local:
+		position = lerp(position, target_position, delta * 10.0)

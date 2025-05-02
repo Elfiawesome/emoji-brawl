@@ -1,10 +1,10 @@
 class_name Server extends Node
 
 var network_bus: NetworkBus
+var avatar_manager: AvatarServerManager
 
 var tcp_server: TCPServer
 var clients: Dictionary[String, ClientBase] = {}
-var is_battle: bool = false
 
 func _ready() -> void:
 	initialize_managers()
@@ -12,6 +12,8 @@ func _ready() -> void:
 
 func initialize_managers() -> void:
 	network_bus = NetworkBus.new(self)
+	avatar_manager = AvatarServerManager.new(network_bus)
+	add_child(avatar_manager)
 
 func initialize_server() -> void:
 	var port := 3115
@@ -23,26 +25,12 @@ func _process(_delta: float) -> void:
 	if tcp_server.is_connection_available():
 		var client := ClientConnection.new(tcp_server.take_connection())
 		take_client_connection(client)
-	
-	var avatars_data := {}
-	for client_id in clients:
-		var client := clients[client_id]
-		if client.is_avatar_changed:
-			avatars_data[client.avatar_id] = client.avatar_position
-			client.is_avatar_changed = false
-	if !avatars_data.is_empty():
-		for client_id in clients:
-			var client := clients[client_id]
-			var _avatar_data := avatars_data.duplicate()
-			_avatar_data.erase(client.avatar_id)
-			network_bus.send_data(client_id, "update_avatars_position", [_avatar_data])
 
 func take_client_connection(client: ClientBase) -> void:
 	client.packet_received.connect(_on_client_handle_data.bind(client))
 	add_child(client)
 
 func _on_client_handle_data(type: String, data: Array, client: ClientBase) -> void:
-	#print("Server packet: " + type + " -> " +str(data) + " {" + str(client.id) + "}")
 	var handler := PacketHandlerServer.get_handler(type)
 	if !handler: return
 	handler.run(self, client, data)
@@ -68,11 +56,11 @@ class NetworkBus extends RefCounted:
 class ClientBase extends Node:
 	signal packet_received(type: String, data: Array)
 	
-	var avatar_id: String
-	var avatar_position: Vector2
-	var is_avatar_changed: bool = false
+	var username: String
+	var controlled_avatar_id: String
+	
 	var state: State = State.NONE
-	var id: String
+	var id: String # Usually set during connection_request based on username/hash
 	
 	enum State {
 		NONE = 0,

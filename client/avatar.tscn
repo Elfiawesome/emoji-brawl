@@ -1,11 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://bycg1yr02x4jd"]
+[gd_scene load_steps=5 format=3 uid="uid://bycg1yr02x4jd"]
 
 [ext_resource type="Script" uid="uid://ciql4ojr7cxn0" path="res://client/avatar.gd" id="1_big3p"]
-[ext_resource type="Texture2D" uid="uid://22mfd2kwu87i" path="res://asset/character/avatar_1.png" id="1_l1im2"]
+[ext_resource type="Shader" uid="uid://bh0qor2k4neet" path="res://asset/shaders/doodle.gdshader" id="2_k2q3y"]
+[ext_resource type="Texture2D" uid="uid://05sw04m4u27c" path="res://asset/character/avatar_3.png" id="3_k2q3y"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_65pu0"]
+shader = ExtResource("2_k2q3y")
+shader_parameter/noise_scale = 8.0
+shader_parameter/noise_frequency = 4.0
+shader_parameter/tint_color = Color(1, 1, 1, 1)
 
 [node name="avatar" type="Node2D"]
 script = ExtResource("1_big3p")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_65pu0")
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_l1im2")
+texture = ExtResource("3_k2q3y")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -23.5
+offset_top = -92.0
+offset_right = 23.5
+offset_bottom = -69.0
+grow_horizontal = 2
+text = "A"
+horizontal_alignment = 1

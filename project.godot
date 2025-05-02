@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Battle Things"
+config/name="Emoji Brawl"
 config/description="Emoji Brawl"
 run/main_scene="uid://b6may7mo8ynl8"
 config/features=PackedStringArray("4.4", "Forward Plus")
