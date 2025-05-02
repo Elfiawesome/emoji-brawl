@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bycg1yr02x4jd"]
+
+[ext_resource type="Script" uid="uid://ciql4ojr7cxn0" path="res://client/avatar.gd" id="1_big3p"]
+[ext_resource type="Texture2D" uid="uid://22mfd2kwu87i" path="res://asset/character/avatar_1.png" id="1_l1im2"]
+
+[node name="avatar" type="Node2D"]
+script = ExtResource("1_big3p")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_l1im2")
