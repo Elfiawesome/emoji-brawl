@@ -6,7 +6,8 @@ extends Node
 func run(server: Server, client: Server.ClientBase, _data: Array) -> void: 
 	if client.id != "":
 		if server.clients.has(client.id):
-			server.avatar_manager.remove_avatar_for_client(client.id)
+			if (client.current_world_id) and (client.current_world_id in server.world_manager.worlds):
+				server.world_manager.worlds[client.current_world_id].avatar_manager.remove_avatar_for_client(client.id)
 			server.clients.erase(client.id)
 	else:
 		pass

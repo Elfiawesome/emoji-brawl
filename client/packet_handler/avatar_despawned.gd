@@ -5,9 +5,13 @@ func run(game: GameSession, data: Array) -> void:
 		printerr("Invalid 'avatar_despawned' packet received.")
 		return
 	
+	if !game.world:
+		printerr("World is not loaded to 'avatar_despawned'!")
+		return
+	
 	var avatar_id: String = data[0]
 	
-	game.avatar_manager.despawn_avatar(avatar_id)
+	game.world.avatar_manager.despawn_avatar(avatar_id)
 
 func validate_data(data: Array) -> bool:
 	if data.size() != 1: return false

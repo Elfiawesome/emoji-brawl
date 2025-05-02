@@ -2,16 +2,16 @@ class_name AvatarServerManager extends Node
 
 # Constants
 const DEFAULT_START_POS := Vector2(200, 200)
-const MOVEMENT_SPEED := 300.0 # Server should define speed
+const MOVEMENT_SPEED := 300.0
 
-# Reference
-var network_bus: Server.NetworkBus
+# Reference of a wrapper
+var network_bus: WorldServerManager.WorldServer.NetworkBusWrapper
 
 # Game states
 var avatars: Dictionary[String, AvatarServerState] = {}
 var _client_to_avatar: Dictionary[String, String] = {} # Map of clients id to avatar id
 
-func _init(network_bus_: Server.NetworkBus) -> void:
+func _init(network_bus_: WorldServerManager.WorldServer.NetworkBusWrapper) -> void:
 	name = "AvatarServerManager"
 	network_bus = network_bus_
 

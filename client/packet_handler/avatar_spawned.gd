@@ -5,10 +5,14 @@ func run(game: GameSession, data: Array) -> void:
 		printerr("Invalid 'avatar_spawned' packet received.")
 		return
 	
+	if !game.world:
+		printerr("World is not loaded to 'avatar_spawned'!")
+		return
+	
 	var avatar_id: String = data[0]
 	var initial_avatar_state: Dictionary = data[1]
 	
-	game.avatar_manager.spawn_avatar(avatar_id, initial_avatar_state)
+	game.world.avatar_manager.spawn_avatar(avatar_id, initial_avatar_state)
 
 func validate_data(data: Array) -> bool:
 	if data.size() != 2: return false

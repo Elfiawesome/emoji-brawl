@@ -22,6 +22,7 @@ func deserialize(state_data: Dictionary) -> void:
 		position = lerp(position, server_pos, RECONCILE_LERP_FACTOR)
 	else:
 		target_position = server_pos
+		#$AnimationPlayer.play("move")
 
 const KEYS = {
 	USERNAME = "username",

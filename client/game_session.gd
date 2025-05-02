@@ -1,7 +1,7 @@
 class_name GameSession extends Node
 
 var network_connection: NetworkConnectionBase
-var avatar_manager: AvatarClientManager
+var world: World
 
 @onready var disconnect_panel: Panel = $CanvasLayer/Panel
 @onready var disconnect_label: Label = $CanvasLayer/Panel/Label
@@ -14,16 +14,21 @@ func _ready() -> void:
 		network_connection = NetworkConnectionIntegrated.new(server)
 	else:
 		network_connection = NetworkConnectionServer.new()
-	# Initalize managers
-	initialize_managers()
+	
 	# Connect to server
 	network_connection.packet_received.connect(_on_handle_data)
 	add_child(network_connection)
 	network_connection.connect_to_server("127.0.0.1", 3115, Global.username)
 
-func initialize_managers() -> void:
-	avatar_manager = AvatarClientManager.new(self, network_connection)
-	add_child(avatar_manager)
+func create_world(world_state: Dictionary) -> void:
+	if world:
+		return
+	
+	var scene: PackedScene = load("res://client/world/world.tscn")
+	world = scene.instantiate() as World
+	world.network_connection = network_connection
+	add_child(world)
+	world.deserialize(world_state)
 
 func _on_handle_data(type: String, data: Array) -> void:
 	var handler := PacketHandlerClient.get_handler(type)

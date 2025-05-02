@@ -18,6 +18,13 @@ func register_all_objects_in_folder(folder: String, instance_load_type: int = 0)
 			if object is GDScript:
 				register_object(id, object.new())
 
+func register_all_scenes_in_folder(folder: String) -> void:
+	for file_path in ResourceLoader.list_directory(folder):
+		var id := file_path.split(".")[0]
+		var object := ResourceLoader.load(folder + "/" + file_path)
+		if object is PackedScene:
+			register_object(id, object)
+
 func register_object(name: String, object: Variant) -> void:
 	_map.set(name, object)
 

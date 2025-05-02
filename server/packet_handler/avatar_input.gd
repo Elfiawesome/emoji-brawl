@@ -11,9 +11,10 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 	
 	var input_direction: Vector2 = data[0]
 	var delta: float = data[1]
-
-	# Pass validated input to the manager
-	server.avatar_manager.process_input(client.controlled_avatar_id, input_direction, delta)
+	
+	# Route to correct work
+	if (client.current_world_id) and (client.current_world_id in server.world_manager.worlds):
+		server.world_manager.worlds[client.current_world_id].avatar_manager.process_input(client.controlled_avatar_id, input_direction, delta)
 
 
 func validate_data(data: Array) -> bool:

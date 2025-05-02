@@ -1,7 +1,7 @@
 class_name Server extends Node
 
 var network_bus: NetworkBus
-var avatar_manager: AvatarServerManager
+var world_manager: WorldServerManager
 
 var tcp_server: TCPServer
 var clients: Dictionary[String, ClientBase] = {}
@@ -12,8 +12,12 @@ func _ready() -> void:
 
 func initialize_managers() -> void:
 	network_bus = NetworkBus.new(self)
-	avatar_manager = AvatarServerManager.new(network_bus)
-	add_child(avatar_manager)
+	world_manager = WorldServerManager.new(network_bus)
+	add_child(world_manager)
+	
+	world_manager.load_world("testing_world")
+	world_manager.load_world("happy")
+	world_manager.load_world("sadge")
 
 func initialize_server() -> void:
 	var port := 3115
@@ -57,6 +61,7 @@ class ClientBase extends Node:
 	signal packet_received(type: String, data: Array)
 	
 	var username: String
+	var current_world_id: String
 	var controlled_avatar_id: String # Used as reference to delete avatar when processing input
 	
 	var state: State = State.NONE

@@ -1,6 +1,6 @@
 class_name AvatarClientManager extends Node
 
-var game_session: GameSession
+var world: World
 var network_connection: GameSession.NetworkConnectionBase
 
 const AVATAR_SCENE := preload("res://client/avatar.tscn")
@@ -8,9 +8,9 @@ const AVATAR_SCENE := preload("res://client/avatar.tscn")
 var avatars: Dictionary[String, Avatar] = {}
 var local_avatar_id: String # Used to find the local avatar to do immediate local movement
 
-func _init(game_session_: GameSession, network_connection_: GameSession.NetworkConnectionBase) -> void:
+func _init(world_: World, network_connection_: GameSession.NetworkConnectionBase) -> void:
 	name = "AvatarClientManager"
-	game_session = game_session_
+	world = world_
 	network_connection = network_connection_
 
 func _process(delta: float) -> void:
@@ -33,7 +33,7 @@ func set_local_avatar_id(local_avatar_id_: String) -> void:
 
 func spawn_avatar(avatar_id: String, inital_state:Dictionary) -> void:
 	var avatar := AVATAR_SCENE.instantiate()
-	game_session.add_child(avatar)
+	world.add_child(avatar)
 	
 	avatar.deserialize(inital_state)
 	# SPECIAL CASE: the position need not lerp but can be set immediately
