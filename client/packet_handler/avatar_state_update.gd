@@ -6,7 +6,7 @@ func run(game: GameSession, data: Array) -> void:
 		return
 	
 	if !game.world:
-		printerr("World is not loaded to 'avatar_state_update'!")
+		printerr("World is not loaded for 'avatar_state_update'!")
 		return
 	
 	var states: Dictionary = data[0]

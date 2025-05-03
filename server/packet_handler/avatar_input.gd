@@ -5,9 +5,14 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 		push_warning("Client %s sent invalid avatar input data." % client.id)
 		return
 	
+	if not client.current_world_id:
+		push_warning("Client %s sent input but is not in any world." % client.id)
+		return
+	
 	if not client.controlled_avatar_id:
 		push_warning("Client %s sent input but has no controlled avatar." % client.id)
 		return
+	
 	
 	var input_direction: Vector2 = data[0]
 	var delta: float = data[1]

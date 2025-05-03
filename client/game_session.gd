@@ -1,10 +1,16 @@
 class_name GameSession extends Node
 
+const WORLD_SCENE := preload("res://client/world/world.tscn")
+const BATTLE_SCENE := preload("res://client/battle.tscn")
+
 var network_connection: NetworkConnectionBase
 var world: World
+var battle: Battle
 
-@onready var disconnect_panel: Panel = $CanvasLayer/Panel
-@onready var disconnect_label: Label = $CanvasLayer/Panel/Label
+@onready var disconnect_panel: Panel = $Overlay/DisconnectPanel
+@onready var disconnect_label: Label = $Overlay/DisconnectPanel/Label
+@onready var world_transition: ColorRect = $Overlay/WorldTransition
+@onready var battle_layer: CanvasLayer = $BattleLayer
 
 func _ready() -> void:
 	# Create relevant connection thingy
@@ -20,12 +26,19 @@ func _ready() -> void:
 	add_child(network_connection)
 	network_connection.connect_to_server("127.0.0.1", 3115, Global.username)
 
+# DEBUG
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.pressed and event.keycode == KEY_Q:
+			network_connection.send_data("request_change_world")
+		if event.pressed and event.keycode == KEY_SPACE:
+			network_connection.send_data("request_start_battle")
+
 func create_world(world_state: Dictionary) -> void:
 	if world:
 		return
 	
-	var scene: PackedScene = load("res://client/world/world.tscn")
-	world = scene.instantiate() as World
+	world = WORLD_SCENE.instantiate() as World
 	world.network_connection = network_connection
 	add_child(world)
 	world.deserialize(world_state)

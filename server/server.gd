@@ -15,7 +15,6 @@ func initialize_managers() -> void:
 	world_manager = WorldServerManager.new(network_bus)
 	add_child(world_manager)
 	
-	world_manager.load_world("testing_world")
 	world_manager.load_world("happy")
 	world_manager.load_world("sadge")
 
@@ -61,8 +60,11 @@ class ClientBase extends Node:
 	signal packet_received(type: String, data: Array)
 	
 	var username: String
+	var color: Color
+	# routing
 	var current_world_id: String
 	var controlled_avatar_id: String # Used as reference to delete avatar when processing input
+	var current_battle_id: String
 	
 	var state: State = State.NONE
 	var id: String # Usually set during connection_request based on username/hash

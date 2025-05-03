@@ -38,12 +38,13 @@ func _process(_delta: float) -> void:
 	send_state_updates()
 
 func remove_avatar_for_client(client_id: String) -> void:
+	# TODO: is it really neccesary for _client_to_avatar?
 	if client_id in _client_to_avatar:
 		var avatar_id := _client_to_avatar[client_id]
 		if avatar_id in avatars:
 			print("Removing avatar %s for client %s" % [avatar_id, client_id])
 			avatars.erase(avatar_id) # Remove AvatarServerState + auto cleanup since RefCounted
-			network_bus.broadcast_data("avatar_despawned", [avatar_id])
+			network_bus.broadcast_specific_data([client_id], "avatar_despawned", [avatar_id], true)
 		else:
 			push_warning("Avatar %s not found for client %s during removal." % [avatar_id, client_id])
 		_client_to_avatar.erase(client_id)
