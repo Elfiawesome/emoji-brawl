@@ -10,13 +10,13 @@ func run(server: Server, client: Server.ClientBase, data: Array) -> void:
 	
 	# Unload that person from the old orld
 	if client.current_world_id:
-		var world := server.world_manager.worlds[client.current_world_id]
-		world.remove_client(client)
+		var old_world := server.world_manager.worlds[client.current_world_id]
+		old_world.remove_client(client)
 	
 	# Load that player into the new world
-	var world := server.world_manager.get_random_world()
-	if world:
-		world.add_client(client)
+	var new_world := server.world_manager.get_random_world()
+	if new_world:
+		new_world.add_client(client)
 
 
 
