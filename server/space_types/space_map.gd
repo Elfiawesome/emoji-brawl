@@ -7,7 +7,7 @@ var entities: Dictionary[String, EntityState] = {}
 var _client_id_to_entity_id: Dictionary[String, String] = {} # Used when we want to move a player's entity and delete a player's entity
 
 # Map state
-var player_data: Dictionary[String, Dictionary] = {} # [client_id, data of player in save]
+var player_data: Dictionary[String, Dictionary] = {} # [client_id, entity state data]
 var map_name: String # Visual Name
 var map_description: String
 
@@ -31,7 +31,7 @@ func client_joined(client_id: String) -> void:
 	
 	# Load player_data data if he's been here before
 	if client_id in player_data:
-		entity_state.from_player_data(player_data[client_id])
+		entity_state.from_entity_data(player_data[client_id])
 	
 	send_data(client_id, "spawn_map", [entity_state.id, map_name, map_description])
 	broadcast_data("entities_snapshot", [get_entities_snapshot(true)])
@@ -44,7 +44,7 @@ func client_left(client_id: String) -> void:
 		var entity := entities[entity_id]
 		
 		# save into player_data
-		player_data[client_id] = entity.to_player_data()
+		player_data[client_id] = entity.to_entity_data()
 		
 		despawn_entity(entity_id)
 		_client_id_to_entity_id.erase(client_id)
@@ -83,7 +83,7 @@ func save_state() -> Dictionary:
 	for client_id in _client_id_to_entity_id:
 		var entity_id := _client_id_to_entity_id[client_id]
 		var entity := entities[entity_id]
-		player_data[client_id] = entity.to_player_data()
+		player_data[client_id] = entity.to_entity_data()
 	return {
 		"map_id": map_id,
 		"name": map_name,
@@ -97,15 +97,16 @@ class EntityState:
 	var position: Vector2
 	var needs_state_update: bool = false
 	
+	# NOTE use serialize if we are going to sent it through put_var
+	# NOTE use to_xxx_data/to_data if we are going to sent it through json
+	# NOTE THis concept is still pretty messy
 	func serialize() -> Dictionary:
 		return { "position": position }
 	
-	# TODO: FIX: Idk how to handle with json and Vector2 so im forced to split this up
-	func to_player_data() -> Dictionary:
+	func to_entity_data() -> Dictionary:
 		return {"position": [position.x, position.y]}
 	
-	# from a save file
-	func from_player_data(data: Dictionary) -> void:
+	func from_entity_data(data: Dictionary) -> void:
 		var _p: Array = data.get("position", [0, 0])
 		position = Vector2(_p[0], _p[1])
 	

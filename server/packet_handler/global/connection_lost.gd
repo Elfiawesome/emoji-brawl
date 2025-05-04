@@ -7,5 +7,8 @@ func run(server: Server, _data: Array, conn: NetworkServerManager.Connection) ->
 		if server.network_manager.connections.has(conn.id):
 			server.network_manager.connections.erase(conn.id)
 		
+		# Unload global player data and saves it
+		server.delete_player_state(conn.id)
+		
 		# trigger leave on space
 		server.space_manager.deassign_client_from_space(conn.id)

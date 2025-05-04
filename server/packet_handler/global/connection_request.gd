@@ -14,7 +14,10 @@ func run(server: Server, data: Array, conn: NetworkServerManager.Connection) -> 
 	server.network_manager.connections[hash_id] = conn
 	conn.id = hash_id
 	
+	# load player data from save
+	server.create_player_state(conn.id)
 	
-	var target_map_id: String = server.space_manager.maps_loaded.keys()[0] #.pick_random()
+	var target_map_id: String = "willow"
+	server.load_map(target_map_id)
 	var space_id := server.space_manager.maps_loaded[target_map_id]
 	server.space_manager.assign_client_to_space(conn.id, space_id)
