@@ -11,5 +11,9 @@ func run(server: Server, data: Array, conn: NetworkServerManager.Connection) -> 
 		var target_map_id: String = map_options.pick_random()
 		
 		server.load_map(target_map_id)
+		server.global_player_states[conn.id].last_map_id = target_map_id
 		var space_id := server.space_manager.maps_loaded[target_map_id]
 		server.space_manager.assign_client_to_space(conn.id, space_id)
+		
+		if current_space.connected_clients.is_empty():
+			server.unload_map(current_space.map_id)

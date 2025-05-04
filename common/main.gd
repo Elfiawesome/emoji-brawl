@@ -14,6 +14,11 @@ func _ready() -> void:
 		server = SERVER_SCENE.instantiate()
 		add_child(server)
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.pressed and event.keycode == KEY_ESCAPE:
+			server.shutdown()
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if server:

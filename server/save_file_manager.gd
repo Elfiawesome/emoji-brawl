@@ -73,12 +73,12 @@ func save_map_state(map_name: String, map_data: Dictionary) -> void:
 
 # Get global player data
 func load_global_player_data(client_id: String) -> Dictionary:
-	print("[SERVER][FILE] Saving global player data state %s" % client_id)
 	var player_data_json := _get_abs_item_path(SaveSections.PLAYER, client_id, ".json")
 	return _load_abs_json_file(player_data_json, {})
 
 # Get global player data
 func save_global_player_data(client_id: String, player_data: Dictionary) -> void:
+	print("[SERVER][FILE] Saving global player data state %s" % client_id)
 	var player_data_json := _get_abs_item_path(SaveSections.PLAYER, client_id, ".json")
 	var f := FileAccess.open(player_data_json, FileAccess.WRITE)
 	f.store_string(JSON.stringify(player_data))

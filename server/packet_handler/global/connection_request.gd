@@ -17,7 +17,11 @@ func run(server: Server, data: Array, conn: NetworkServerManager.Connection) -> 
 	# load player data from save
 	server.create_player_state(conn.id)
 	
-	var target_map_id: String = "willow"
+	var target_map_id: String = "lobby"
+	if server.global_player_states[conn.id].last_map_id:
+		target_map_id = server.global_player_states[conn.id].last_map_id
+	
 	server.load_map(target_map_id)
 	var space_id := server.space_manager.maps_loaded[target_map_id]
 	server.space_manager.assign_client_to_space(conn.id, space_id)
+	server.global_player_states[conn.id].last_map_id = target_map_id

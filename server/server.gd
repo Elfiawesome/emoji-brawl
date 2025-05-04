@@ -9,7 +9,6 @@ var global_player_states: Dictionary[String, PlayerState] = {} # Hold any global
 func _ready() -> void:
 	# initialize managers
 	space_manager.network_bus = network_manager.network_bus
-	space_manager.space_freed.connect(_on_space_freed)
 	# Open my save
 	save_manager.new_save("my_save")
 	
@@ -25,9 +24,20 @@ func load_map(map_id: String) -> void:
 	space_manager.maps_loaded[map_id] = space_map.id
 	space_map.name = "MAP_"+map_id.to_upper()
 
+func unload_map(map_id: String) -> void:
+	if map_id in space_manager.maps_loaded:
+		var space_map_id:= space_manager.maps_loaded[map_id]
+		var space_map := space_manager.spaces[space_map_id] as SpaceMap
+		space_manager.remove_space(space_map.id)
+		space_manager.maps_loaded.erase(map_id)
+		# save map state
+		save_manager.save_map_state(map_id, space_map.save_state())
+
+
 # Load player state into memory
 func create_player_state(client_id: String) -> void:
 	var player_data := save_manager.load_global_player_data(client_id)
+	print(player_data)
 	global_player_states[client_id] = PlayerState.new()
 	global_player_states[client_id].from_data(player_data)
 
@@ -38,19 +48,15 @@ func delete_player_state(client_id: String) -> void:
 		save_manager.save_global_player_data(client_id, player_data)
 		global_player_states.erase(client_id)
 
-# Handle if any space is freed (specifically maps)
-func _on_space_freed(space: ServerSpaceManager.ServerSpace) -> void:
-	if space is SpaceMap:
-		save_manager.save_map_state(space.map_id, space.save_state())
-
 func shutdown() -> void:
 	print("[SERVER] Shutting down...")
 	# disconnect all spaces
 	for space_id in space_manager.spaces:
 		var space := space_manager.spaces[space_id]
-		while !(space.connected_clients.is_empty()):
-			var client_id := space.connected_clients[0]
-			space_manager.deassign_client_from_space(client_id)
+		if space is SpaceMap:
+			unload_map(space.map_id)
+			continue
+		space_manager.remove_space(space_id)
 	
 	# Save global player state
 	for client_id in global_player_states:

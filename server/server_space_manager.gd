@@ -1,8 +1,5 @@
 class_name ServerSpaceManager extends Node
 
-signal space_created(space: ServerSpace) # Not used
-signal space_freed(space: ServerSpace)
-
 var network_bus: NetworkServerManager.NetworkBus
 
 # Spaces
@@ -19,7 +16,6 @@ func add_space(space: ServerSpace) -> void:
 	space.id = space_id
 	# Spaces sent signal packets up while server sents network_bus down
 	space.data_sent.connect(network_bus.send_data)
-	space_created.emit(space)
 	add_child(space)
 
 func remove_space(space_id: String) -> void:
@@ -44,11 +40,6 @@ func deassign_client_from_space(client_id: String) -> void:
 		_client_to_spaces.erase(client_id)
 		if old_space_id in spaces:
 			spaces[old_space_id].client_left(client_id)
-			
-			# delete space when empty
-			if spaces[old_space_id].connected_clients.is_empty():
-				space_freed.emit(spaces[old_space_id])
-				remove_space(old_space_id)
 
 class ServerSpace extends Node:
 	# Generic server space class to represent a compartment in the server
