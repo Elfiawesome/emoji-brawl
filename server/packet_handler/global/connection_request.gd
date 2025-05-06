@@ -10,18 +10,28 @@ func run(server: Server, data: Array, conn: NetworkServerManager.Connection) -> 
 	if hash_id in server.network_manager.connections:
 		conn.force_disconnect("A username is already in this server!")
 		return
-	
+
+	# STEP 1: Add to NetworkManager for network communication
+	# Add player connection to the network 
 	server.network_manager.connections[hash_id] = conn
 	conn.id = hash_id
 	
-	# load player data from save
-	server.create_player_state(conn.id)
+	# STEP 2: Add to PlayerStatesManager for global player state
+	# load player data from save & create save file if he doesnt have a save
+	var player_data := server.persistance_manager.bus.load_player_data(conn.id) as Dictionary
+	server.player_states_manager.add_player(
+		conn.id,
+		username,
+		player_data
+	)
+	if player_data.is_empty():
+		server.persistance_manager.bus.save_player_data(
+			conn.id, 
+			server.player_states_manager.get_player(conn.id).to_dict()
+		)
 	
-	var target_map_id: String = "lobby"
-	if server.global_player_states[conn.id].last_map_id:
-		target_map_id = server.global_player_states[conn.id].last_map_id
-	
-	server.load_map(target_map_id)
-	var space_id := server.space_manager.maps_loaded[target_map_id]
-	server.space_manager.assign_client_to_space(conn.id, space_id)
-	server.global_player_states[conn.id].last_map_id = target_map_id
+	# STEP 3: Add him to a space
+	# TODO: thing
+	var new_space := SpaceManager.Space.new()
+	server.space_manager.add_space(new_space)
+	server.space_manager.assign_client_to_space(conn.id, new_space.id)

@@ -3,6 +3,7 @@ class_name NetworkClientManager extends Node
 var connection: Connection
 
 class Connection extends Node:
+	@warning_ignore("unused_signal")
 	signal packet_received(_type: String, _data: Array)
 
 	var _request_data: Dictionary

@@ -7,12 +7,18 @@ var server: Server
 var client: Client
 
 func _ready() -> void:
-	client = CLIENT_SCENE.instantiate()
-	add_child(client)
-	
 	if Global.instance_num == 0:
 		server = SERVER_SCENE.instantiate()
 		add_child(server)
+	
+	client = CLIENT_SCENE.instantiate()
+	add_child(client)
+	client.connect_to_server(
+		"127.0.0.1",
+		51134,
+		Global.username
+	)
+
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
