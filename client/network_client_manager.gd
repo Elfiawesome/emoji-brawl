@@ -11,9 +11,33 @@ class Connection extends Node:
 	func connect_to_server(request_data: Dictionary = {}) -> void:
 		_request_data = request_data
 	func send_data(_type: String, _data: Array = []) -> void: pass
+	
+	func get_status() -> StreamPeerTCP.Status:
+		return StreamPeerTCP.Status.STATUS_NONE
+
+	func leave_server() -> void: pass
+
 
 class IntegratedConnection extends Connection:
-	pass
+	var network_server_manager: NetworkServerManager
+	var server_integrated_connection: NetworkServerManager.IntegratedConnection
+	
+	func _init(network_server_manager_: NetworkServerManager) -> void:
+		network_server_manager = network_server_manager_
+	
+	func connect_to_server(request_data: Dictionary = {}) -> void:
+		super.connect_to_server(request_data)
+		server_integrated_connection = NetworkServerManager.IntegratedConnection.new()
+		server_integrated_connection.packet_sent.connect(_on_packet_received)
+		network_server_manager.attach_connection(server_integrated_connection)
+		# We skip the init_request portion and simulate it instead
+		_on_packet_received("init_request", [])
+	
+	func send_data(type: String, data: Array = []) -> void:
+		server_integrated_connection.packet_received.emit(type, data)
+	
+	func _on_packet_received(type: String, data: Array) -> void:
+		packet_received.emit(type, data)
 
 class TCPConnection extends Connection:
 	var address: String
@@ -52,6 +76,12 @@ class TCPConnection extends Connection:
 				var data_: Array = data[1]
 				packet_received.emit(type, data_)
 	
+	func get_status() -> StreamPeerTCP.Status:
+		if stream_peer:
+			stream_peer.poll()
+			return stream_peer.get_status()
+		return StreamPeerTCP.Status.STATUS_NONE
+
 	func disconnect_from_server(disconnect_reason: String = "Unknown disconnected by server.") -> void:
 		var disconnect_data := {"reason": disconnect_reason}
 		packet_received.emit("force_disconnect", [disconnect_data])

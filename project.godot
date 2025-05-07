@@ -15,7 +15,7 @@ config/description="Emoji Brawl"
 run/main_scene="uid://cmx7kkjbo4qtm"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
-config/icon="res://icon.svg"
+config/icon="uid://c53sdtc6bfi4r"
 
 [autoload]
 
