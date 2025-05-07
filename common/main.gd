@@ -21,6 +21,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if !server: return
 	if event is InputEventKey:
 		if event.pressed and event.keycode == KEY_ESCAPE:
 			server.shutdown()

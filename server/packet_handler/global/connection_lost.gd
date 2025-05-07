@@ -4,6 +4,7 @@ extends PacketHandlerServer
 func run(server: Server, _data: Array, conn: NetworkServerManager.Connection) -> void:
 	var client_id: String = conn.id
 	if client_id != "":
+		pass
 		# STEP 1: Remove client from NetworkManager
 		if server.network_manager.connections.has(client_id):
 			server.network_manager.connections.erase(client_id)
@@ -15,4 +16,5 @@ func run(server: Server, _data: Array, conn: NetworkServerManager.Connection) ->
 			)
 			server.player_states_manager.remove_player(client_id)
 
-		# STEP 3: Add him to a space
+		# STEP 3: Remove him from space
+		server.space_manager.deassign_client_from_space(client_id)

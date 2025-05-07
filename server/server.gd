@@ -8,6 +8,12 @@ class_name Server extends Node
 ##Global Server Manager Bus
 var server_bus: ServerBus
 
+const SPACE_TYPES = {
+	DEFAULT_SPACE = "space",
+	MAP = "map",
+	BATTLE = "battle"
+}
+
 func _ready() -> void:
 	# Initialize ServerBus
 	server_bus = ServerBus.new(
@@ -36,10 +42,12 @@ func _on_packet_received(type: String, data: Array, conn: NetworkServerManager.C
 		handler.run(self, data, conn)
 
 func shutdown() -> void:
-	# Save all player states
-	for client_id in player_states_manager.player_states:
-		var player_state := player_states_manager.player_states[client_id]
-		server_bus.persitance.save_player_data(client_id, player_state.to_dict())
+	# Simulate disconnection on all clients 
+	# NOTE: Apparently you cant just anyhow delete keys ina  dictionary while in a loop cuz it didnt work here
+	for client_id: String in network_manager.connections.keys():
+		network_manager.connections[client_id].force_disconnect("Server Shutdown...")
+	
+	network_manager._tcp_server.stop()
 
 class ServerBus extends RefCounted:
 	var network: NetworkServerManager.NetworkBus

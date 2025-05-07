@@ -5,7 +5,8 @@ extends PacketHandlerClient
 func run(client: Client, data: Array) -> void:
 	if !Schema.is_valid(data, [TYPE_DICTIONARY]): return
 	var disconnect_data: Dictionary = data[0]
-
+	# TODO: Make it so that when we receive a disconnect packet, we should already 
+	# be disconnected and not accepting any other packets beyond this points
 	client.disconnect_panel.visible = true
 	client.disconnect_label.text = "Disconnected from server\nReason: %s" % disconnect_data.get("reason", "Unknown reason")
 

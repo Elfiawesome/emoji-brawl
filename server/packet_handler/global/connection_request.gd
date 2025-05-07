@@ -31,7 +31,5 @@ func run(server: Server, data: Array, conn: NetworkServerManager.Connection) -> 
 		)
 	
 	# STEP 3: Add him to a space
-	# TODO: thing
-	var new_space := SpaceManager.Space.new()
-	server.space_manager.add_space(new_space)
-	server.space_manager.assign_client_to_space(conn.id, new_space.id)
+	var new_space := server.space_manager.add_space("space")
+	if new_space: server.space_manager.assign_client_to_space(conn.id, new_space.id)

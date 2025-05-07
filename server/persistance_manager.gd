@@ -4,6 +4,8 @@ var dir: DirAccess
 var bus: PersistanceBus
 var server_config: ServerConfig # A read only reference of server configs
 
+const GAME_DATA_PATH := "res://.temp-saves/" # "user://" for now we use the game project file to debug
+
 const FOLDERS = {
 	PLAYER_DATA = "player_data",
 }
@@ -12,7 +14,8 @@ func _ready() -> void:
 	bus = PersistanceBus.new(self)
 
 func new_save(save_name: String) -> void:
-	var save_dir := "user://saves/" + save_name
+	var save_dir := GAME_DATA_PATH + "saves/" + save_name
+	print(GAME_DATA_PATH)
 	if !DirAccess.dir_exists_absolute(save_dir):
 		DirAccess.make_dir_recursive_absolute(save_dir)
 	dir = DirAccess.open(save_dir)
