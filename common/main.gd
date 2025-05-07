@@ -12,6 +12,7 @@ func _ready() -> void:
 		add_child(server)
 	
 	client = CLIENT_SCENE.instantiate()
+	if server: client.game_config = server.persistance_manager.server_config
 	add_child(client)
 	client.connect_to_server(
 		"127.0.0.1",

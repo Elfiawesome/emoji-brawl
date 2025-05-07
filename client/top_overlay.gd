@@ -16,7 +16,7 @@ func display() -> void:
 	background_panel.visible = true
 	background_panel.modulate.a = 0.0
 	var tween := create_tween()
-	tween.tween_property(background_panel, "modulate:a", 1.0, 1.0)
+	tween.tween_property(background_panel, "modulate:a", 1.0, .5)
 	is_displayed = true
 
 func display_not() -> void:
@@ -24,7 +24,7 @@ func display_not() -> void:
 	# I mean I wont even be using a reverse display soon anywayss
 	var tween := create_tween()
 	background_panel.modulate.a = 1.0
-	tween.tween_property(background_panel, "modulate:a", 0.0, 1.0)
+	tween.tween_property(background_panel, "modulate:a", 0.0, .5)
 	tween.finished.connect(
 		func() -> void:
 			background_panel.visible = false

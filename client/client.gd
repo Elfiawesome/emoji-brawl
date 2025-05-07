@@ -5,6 +5,7 @@ class_name Client extends Node2D
 
 const MAP_SCENE := preload("res://client/map/local_map.tscn")
 
+var game_config: PersistanceManager.ServerConfig
 var map: LocalMap
 
 func _ready() -> void:
