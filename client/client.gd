@@ -1,16 +1,15 @@
 class_name Client extends Node2D
 
 @onready var network_client_manager: NetworkClientManager = $NetworkClientManager
-
-@onready var disconnect_panel: Panel = $TopOverlay/DisconnectPanel
-@onready var disconnect_label: Label = $TopOverlay/DisconnectPanel/Label
+@onready var top_overlay: ClientTopOverlay = $TopOverlay
 
 const MAP_SCENE := preload("res://client/map/local_map.tscn")
 
 var map: LocalMap
 
 func _ready() -> void:
-	pass
+	top_overlay.set_overlay_message("Loading into server...")
+	top_overlay.display()
 
 func connect_to_server(address: String, port: int, username: String) -> void:
 	# Connect to server
@@ -26,7 +25,6 @@ func set_map(new_map: LocalMap) -> void:
 		map.queue_free()
 	map = new_map
 	new_map.connection = network_client_manager.connection
-	disconnect_panel.visible = false
 	add_child(new_map)
 
 func _on_packet_received(type: String, data: Array) -> void:
