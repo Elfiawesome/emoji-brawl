@@ -16,6 +16,7 @@ run/main_scene="uid://cmx7kkjbo4qtm"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
 config/icon="uid://c53sdtc6bfi4r"
+config/windows_native_icon="res://icon.ico"
 
 [autoload]
 
