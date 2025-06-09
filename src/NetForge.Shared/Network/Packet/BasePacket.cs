@@ -12,6 +12,7 @@ public enum PacketId : ushort
 	C2SLoginResponsePacket,
 
 	S2CEnterMap,
+	S2CUpdateEntities
 }
 
 [MessagePackObject]

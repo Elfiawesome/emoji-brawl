@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MessagePack;
 using NetForge.Shared.Network.Packet.Clientbound.Authentication;
+using NetForge.Shared.Network.Packet.Clientbound.Game;
 using NetForge.Shared.Network.Packet.Serverbound.Authentication;
 
 namespace NetForge.Shared.Network.Packet;
@@ -17,7 +18,9 @@ public static class PacketFactory
 		Register<S2CRequestLoginPacket>(PacketId.S2CRequestLoginPacket);
 		Register<C2SLoginResponsePacket>(PacketId.C2SLoginResponsePacket);
 		Register<S2CLoginSuccessPacket>(PacketId.S2CLoginSuccessPacket);
+
 		Register<S2CEnterMap>(PacketId.S2CEnterMap);
+		Register<S2CUpdateEntities>(PacketId.S2CUpdateEntities);
 	}
 
 	public static void Register<TPacket>(PacketId packetId) where TPacket : BasePacket, new() // What does , new() mean or do?

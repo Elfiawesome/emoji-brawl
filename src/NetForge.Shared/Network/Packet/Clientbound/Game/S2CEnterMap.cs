@@ -1,6 +1,6 @@
 using MessagePack;
 
-namespace NetForge.Shared.Network.Packet.Clientbound.Authentication;
+namespace NetForge.Shared.Network.Packet.Clientbound.Game;
 
 [MessagePackObject]
 public class S2CEnterMap : BasePacket

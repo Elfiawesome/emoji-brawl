@@ -1,3 +1,4 @@
+using System.Numerics;
 using NetForge.Shared;
 
 namespace NetForge.ServerCore.Game;
@@ -7,8 +8,12 @@ public class Player
 {
 	public readonly PlayerId Id;
 
+	public Vector2 Positon = Vector2.Zero;
+
 	public Player(PlayerId id)
 	{
 		Id = id;
+
+
 	}
 }
