@@ -1,0 +1,43 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Emoji Brawl"
+run/main_scene="uid://bxib3c2anmqug"
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
+boot_splash/show_image=false
+config/icon="uid://dq4dscr330ghy"
+
+[autoload]
+
+Global="*res://script/global/Global.cs"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=480
+
+[dotnet]
+
+project/assembly_name="EmojiBrawl"
+project/solution_directory="../"
+
+[editor]
+
+run/main_run_args="0"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0tdi2u1ebjbk"]
+
+[ext_resource type="Script" uid="uid://erdpe2i3ieey" path="res://scene/game_session/entities/Player.cs" id="1_vchr3"]
+[ext_resource type="Texture2D" uid="uid://h618ok8vonfq" path="res://asset/emoji/2_8.png" id="2_8xsl5"]
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_vchr3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_8xsl5")
